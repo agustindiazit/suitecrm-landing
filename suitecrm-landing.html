@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[Nuestra Marca] — Expertos en SuiteCRM</title>
+  <meta name="description" content="Implementación y customización avanzada de SuiteCRM para empresas B2B. Módulos a medida, flujos de trabajo y hosting cloud optimizado." />
+  <!-- ═══ Google Analytics ═══ -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0HFMDZNCZ6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-0HFMDZNCZ6');
+  </script>
+  <!-- ════════════════════════ -->
+  <meta http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src https://fonts.gstatic.com;
+      img-src 'self' data:;
+      connect-src https://api.web3forms.com https://www.google-analytics.com https://analytics.google.com;
+      form-action https://api.web3forms.com;
+      frame-src https://www.google.com;
+      frame-ancestors 'none';
+    " />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta name="referrer" content="strict-origin" />
+  <!-- ════════════════════════════════════════ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       VARIABLES & RESET
+    ========================================================= */
+    :root {
+      --orange:     #f15a24;
+      --orange-dim: #c94b1a;
+      --orange-glow:rgba(241,90,36,0.18);
+      --dark:       #2c3e50;
+      --dark-2:     #1a2535;
+      --dark-3:     #111c2b;
+      --bg:         #f9fafb;
+      --glass-bg:   rgba(255,255,255,0.06);
+      --glass-border:rgba(255,255,255,0.12);
+      --text-light: rgba(255,255,255,0.82);
+      --text-muted: rgba(255,255,255,0.48);
+      --radius:     16px;
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--dark-3);
+      color: #fff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* =========================================================
+       NOISE OVERLAY
+    ========================================================= */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    /* =========================================================
+       GRID BACKGROUND PATTERN
+    ========================================================= */
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* =========================================================
+       NAV
+    ========================================================= */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 5vw;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(17,28,43,0.75);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--glass-border);
+      transition: background var(--transition);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;
+    }
+    .nav-logo .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 12px var(--orange);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 8px var(--orange); }
+      50%      { box-shadow: 0 0 20px var(--orange), 0 0 40px var(--orange-glow); }
+    }
+    .nav-links {
+      display: flex; gap: 2rem;
+    }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--text-light);
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-cta {
+      padding: 9px 20px;
+      background: var(--orange);
+      border-radius: 8px;
+      font-size: 0.875rem; font-weight: 700;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    .nav-cta:hover {
+      background: var(--orange-dim);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(241,90,36,0.35);
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column; gap: 5px; cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: #fff;
+      transition: all var(--transition);
+      border-radius: 2px;
+    }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+    .mobile-menu {
+      display: none;
+      position: fixed; top: 68px; left: 0; right: 0;
+      background: rgba(17,28,43,0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 1.5rem 5vw;
+      flex-direction: column; gap: 1.25rem;
+      z-index: 99;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1rem; font-weight: 500;
+      color: var(--text-light);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--glass-border);
+      transition: color var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--orange); }
+
+    /* =========================================================
+       HERO
+    ========================================================= */
+    #hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 120px 5vw 80px;
+      text-align: center;
+      overflow: hidden;
+    }
+    /* Radial glow behind hero */
+    #hero::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -55%);
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(241,90,36,0.14) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--orange);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      animation: fade-up 0.8s ease both;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--orange);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      max-width: 820px;
+      animation: fade-up 0.9s 0.1s ease both;
+    }
+    h1 .accent { color: var(--orange); }
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-light);
+      max-width: 560px;
+      line-height: 1.7;
+      font-weight: 400;
+      animation: fade-up 1s 0.2s ease both;
+    }
+    .hero-actions {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      animation: fade-up 1s 0.3s ease both;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 15px 32px;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700; font-size: 1rem;
+      border-radius: 10px;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover {
+      background: var(--orange-dim);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px rgba(241,90,36,0.4);
+    }
+    .btn-primary .arrow {
+      transition: transform var(--transition);
+    }
+    .btn-primary:hover .arrow { transform: translateX(4px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 15px 32px;
+      border: 1px solid var(--glass-border);
+      color: var(--text-light);
+      font-weight: 600; font-size: 1rem;
+      border-radius: 10px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      transition: border-color var(--transition), color var(--transition), transform var(--transition);
+      cursor: pointer;
+    }
+    .btn-ghost:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      transform: translateY(-2px);
+    }
+    /* Floating tech chips */
+    .hero-stats {
+      display: flex; flex-wrap: wrap; gap: 1.2rem;
+      justify-content: center;
+      margin-top: 3.5rem;
+      animation: fade-up 1s 0.45s ease both;
+    }
+    .stat-chip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .stat-chip .chip-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--orange);
+      flex-shrink: 0;
+      box-shadow: 0 0 8px var(--orange);
+    }
+
+    /* =========================================================
+       SECTION SHARED
+    ========================================================= */
+    section { position: relative; z-index: 1; }
+    .section-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 96px 5vw;
+    }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .section-label::before {
+      content: '';
+      width: 24px; height: 2px;
+      background: var(--orange);
+      border-radius: 2px;
+    }
+    .section-title {
+      font-size: clamp(1.9rem, 4vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      max-width: 640px;
+    }
+    .section-title .accent { color: var(--orange); }
+    .section-desc {
+      margin-top: 1.2rem;
+      color: var(--text-light);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 580px;
+    }
+
+    /* =========================================================
+       SERVICIOS
+    ========================================================= */
+    #servicios { background: var(--dark-2); }
+    #servicios .section-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+    .services-header { grid-column: 1 / -1; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px);
+      border-radius: var(--radius);
+      padding: 2rem;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(241,90,36,0.3);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(241,90,36,0.1);
+    }
+    .card:hover::before { opacity: 1; }
+    .card-icon {
+      width: 52px; height: 52px;
+      background: var(--orange-glow);
+      border: 1px solid rgba(241,90,36,0.2);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card h3 {
+      font-size: 1.15rem; font-weight: 700;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+    .card p {
+      font-size: 0.92rem;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+    .card-tag {
+      display: inline-block;
+      margin-top: 1.25rem;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      background: rgba(241,90,36,0.12);
+      color: var(--orange);
+      border: 1px solid rgba(241,90,36,0.2);
+    }
+    .card-list {
+      margin-top: 1rem;
+      display: flex; flex-direction: column; gap: 0.55rem;
+    }
+    .card-list li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.9rem; color: var(--text-light); line-height: 1.5;
+    }
+    .card-list li::before {
+      content: '▹';
+      color: var(--orange);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Card shimmer sweep on hover ── */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.55s ease;
+      pointer-events: none;
+    }
+    .card:hover::after { left: 160%; }
+
+    /* ── Card icon pulse on hover ── */
+    .card:hover .card-icon {
+      background: rgba(241,90,36,0.28);
+      transform: scale(1.08) rotate(-3deg);
+      transition: all 0.3s ease;
+    }
+
+    /* ── Add-on card special styling ── */
+    .card-addon {
+      border-color: rgba(241,90,36,0.22);
+      background: linear-gradient(135deg, rgba(241,90,36,0.06) 0%, var(--glass-bg) 60%);
+      position: relative;
+    }
+    .addon-ribbon {
+      position: absolute; top: 16px; right: 16px;
+      padding: 3px 10px;
+      background: var(--orange);
+      color: #fff;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      border-radius: 999px;
+    }
+    .addon-options {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 1rem;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      font-size: 0.83rem; font-weight: 600;
+    }
+    .addon-sep { color: var(--text-muted); }
+
+    /* =========================================================
+       METRICS PANEL (replaces terminal)
+    ========================================================= */
+    .metrics-panel {
+      background: var(--dark-2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      padding: 1.5rem;
+    }
+    .metrics-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    .metrics-label {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .metrics-live {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; font-weight: 600;
+      color: #24f16c;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #24f16c;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    .metrics-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .metric-card:hover { border-color: rgba(241,90,36,0.3); }
+    .metric-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.75rem; font-weight: 700;
+      color: #fff;
+      display: inline;
+    }
+    .metric-unit {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem; color: var(--orange);
+      display: inline; margin-left: 2px;
+    }
+    .metric-name {
+      font-size: 0.75rem; color: var(--text-muted);
+      margin-top: 2px; margin-bottom: 8px;
+    }
+    .metric-bar {
+      height: 4px; background: rgba(255,255,255,0.08);
+      border-radius: 2px; overflow: hidden;
+    }
+    .metric-fill {
+      height: 100%; width: var(--pct);
+      background: linear-gradient(90deg, var(--orange-dim), var(--orange));
+      border-radius: 2px;
+      animation: bar-grow 1.4s cubic-bezier(0.4,0,0.2,1) both;
+      animation-delay: 0.5s;
+    }
+    @keyframes bar-grow { from { width: 0; } }
+    .metrics-sparkline {
+      margin-bottom: 1.25rem;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 1rem;
+    }
+    .metrics-sparkline svg { width: 100%; height: auto; }
+    .sparkline-label {
+      font-size: 0.7rem; color: var(--text-muted);
+      display: block; margin-top: 4px;
+    }
+    .metrics-integrations {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 1rem;
+    }
+    .int-label {
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--text-muted); white-space: nowrap;
+    }
+    .int-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .int-tag {
+      padding: 3px 10px;
+      background: rgba(241,90,36,0.1);
+      border: 1px solid rgba(241,90,36,0.2);
+      border-radius: 6px;
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--orange); letter-spacing: 0.04em;
+    }
+
+    /* =========================================================
+       POR QUÉ ELEGIRNOS — 3 simple cards
+    ========================================================= */
+    #porqueelegirnos { background: var(--dark-2); }
+    .why-simple-inner {
+      display: flex; flex-direction: column; gap: 3.5rem;
+    }
+    .why-header { max-width: 640px; }
+    .why-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .why-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .why-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .why-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(241,90,36,0.3);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    .why-card:hover::before { opacity: 1; }
+    .why-card-icon {
+      font-size: 2rem;
+      margin-bottom: 1.1rem;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .why-card:hover .why-card-icon { transform: scale(1.15) rotate(-4deg); }
+    .why-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.7rem; letter-spacing: -0.01em; }
+    .why-card p  { font-size: 0.91rem; color: var(--text-light); line-height: 1.7; }
+
+    /* =========================================================
+       STEPS — enhanced
+    ========================================================= */
+    .why-glow {
+      position: absolute;
+      bottom: -40px; right: -40px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(241,90,36,0.2), transparent 70%);
+      pointer-events: none;
+    }
+    .why-features {
+      display: flex; flex-direction: column; gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .why-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .why-item .icon-wrap {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: var(--orange-glow);
+      border: 1px solid rgba(241,90,36,0.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .why-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .why-item p { font-size: 0.88rem; color: var(--text-light); line-height: 1.6; }
+
+    /* =========================================================
+       PROCESO
+    ========================================================= */
+    #proceso { background: var(--dark-2); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 3rem;
+      counter-reset: step;
+    }
+    .step {
+      padding: 1.75rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      position: relative;
+      counter-increment: step;
+      overflow: hidden;
+      /* transition solo para hover — SIN delay para que no bloquee el hover */
+      transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    /* número */
+    .step::before {
+      content: counter(step, decimal-leading-zero);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--orange);
+      letter-spacing: 0.05em;
+      display: block; margin-bottom: 1rem;
+    }
+    /* línea naranja top — igual que .card */
+    .step-top-line {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+      pointer-events: none;
+    }
+    /* shimmer sweep — igual que .card::after */
+    .step-shimmer {
+      position: absolute;
+      top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.55s ease;
+      pointer-events: none;
+    }
+    .step:hover {
+      transform: translateY(-6px);
+      border-color: rgba(241,90,36,0.3);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(241,90,36,0.1);
+    }
+    .step:hover .step-top-line { opacity: 1; }
+    .step:hover .step-shimmer   { left: 160%; }
+    .step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .step p  { font-size: 0.87rem; color: var(--text-light); line-height: 1.6; }
+    .step-connector { display: none; }
+
+    /* =========================================================
+       CONTACTO
+    ========================================================= */
+    #contacto .section-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .contact-info h2 { margin-bottom: 1.25rem; }
+    .contact-details {
+      margin-top: 2rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .contact-item {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.92rem; color: var(--text-light);
+    }
+    .contact-item .icon {
+      width: 38px; height: 38px;
+      background: var(--orange-glow);
+      border: 1px solid rgba(241,90,36,0.2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    /* FORM */
+    .form-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-size: 0.82rem; font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.93rem;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--orange);
+      background: rgba(241,90,36,0.06);
+      box-shadow: 0 0 0 3px rgba(241,90,36,0.15);
+    }
+    input.error, textarea.error {
+      border-color: #e74c3c;
+      box-shadow: 0 0 0 3px rgba(231,76,60,0.15);
+    }
+    .field-error {
+      display: block; margin-top: 5px;
+      font-size: 0.78rem; color: #e74c3c;
+      min-height: 1em;
+    }
+    textarea { resize: vertical; min-height: 120px; }
+    select option { background: var(--dark-2); }
+    /* Honeypot */
+    .hp-field { position: absolute; left: -9999px; opacity: 0; height: 0; }
+    /* Submit */
+    .form-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--orange);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      border: none; border-radius: 8px;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      margin-top: 0.5rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .form-submit:hover:not(:disabled) {
+      background: var(--orange-dim);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(241,90,36,0.4);
+    }
+    .form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .form-note {
+      margin-top: 0.8rem;
+      font-size: 0.75rem; color: var(--text-muted);
+      text-align: center;
+    }
+    /* Success/Error messages */
+    .form-message {
+      display: none;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .form-message.success {
+      background: rgba(36,241,108,0.1);
+      border: 1px solid rgba(36,241,108,0.3);
+      color: #24f16c;
+    }
+    .form-message.error-msg {
+      background: rgba(231,76,60,0.1);
+      border: 1px solid rgba(231,76,60,0.3);
+      color: #e74c3c;
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--glass-border);
+      padding: 2.5rem 5vw;
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1rem;
+    }
+    .footer-brand .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--orange);
+    }
+    footer p {
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    footer a { color: var(--orange); transition: opacity var(--transition); }
+    footer a:hover { opacity: 0.8; }
+
+    /* =========================================================
+       SCROLL REVEAL
+    ========================================================= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =========================================================
+       ANIMATIONS
+    ========================================================= */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+    @media (max-width: 900px) {
+      #contacto .section-inner {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+    }
+    @media (max-width: 700px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      h1 { font-size: 2.1rem; }
+      .section-inner { padding: 72px 5vw; }
+      .form-card { padding: 1.75rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <span class="dot"></span>
+    [Nuestra Marca]
+  </div>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#porqueelegirnos">Por qué elegirnos</a></li>
+    <li><a href="#proceso">Proceso</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Consulta gratis →</a>
+  <button class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu" role="navigation">
+  <a href="#servicios">Servicios</a>
+  <a href="#porqueelegirnos">Por qué elegirnos</a>
+  <a href="#proceso">Proceso</a>
+  <a href="#contacto">Contacto</a>
+  <a href="#contacto" style="color:var(--orange);font-weight:700;">Consulta gratis →</a>
+</div>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section id="hero">
+  <span class="hero-badge">Especialistas en SuiteCRM</span>
+  <h1>Llevamos SuiteCRM<br/>al <span class="accent">siguiente nivel</span></h1>
+  <p class="hero-sub">
+    No somos una consultora generalista. Adaptamos SuiteCRM a los procesos únicos de tu empresa
+    con módulos a medida, flujos de trabajo inteligentes e infraestructura cloud de alto rendimiento.
+  </p>
+  <div class="hero-actions">
+    <a href="#contacto" class="btn-primary">
+      Hablar con un experto <span class="arrow">→</span>
+    </a>
+    <a href="#servicios" class="btn-ghost">Ver servicios</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-chip">
+      <span class="chip-dot"></span> Customización a medida
+    </div>
+    <div class="stat-chip">
+      <span class="chip-dot"></span> Uptime garantizado
+    </div>
+    <div class="stat-chip">
+      <span class="chip-dot"></span> Soporte técnico dedicado
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SERVICIOS ═══════════════════════════ -->
+<section id="servicios">
+  <div class="section-inner">
+    <div class="services-header reveal">
+      <span class="section-label">Nuestros servicios</span>
+      <h2 class="section-title">Soluciones CRM que <span class="accent">realmente venden</span></h2>
+      <p class="section-desc">
+        Cada negocio tiene procesos únicos. Nosotros los traducimos en flujos de trabajo,
+        módulos y automatizaciones dentro de SuiteCRM para maximizar el rendimiento de tu equipo comercial.
+      </p>
+    </div>
+    <div class="services-grid">
+
+      <div class="card reveal">
+        <div class="card-icon">⚙️</div>
+        <h3>Implementación de SuiteCRM</h3>
+        <p>Instalación, configuración y puesta en marcha de SuiteCRM en un entorno seguro, escalable y listo para producción desde el primer día.</p>
+        <ul class="card-list">
+          <li>Configuración de roles y permisos</li>
+          <li>Migración de datos desde tu CRM actual</li>
+          <li>Capacitación del equipo comercial</li>
+          <li>Documentación técnica completa</li>
+        </ul>
+        <span class="card-tag">Core Setup</span>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧩</div>
+        <h3>Customización Avanzada</h3>
+        <p>Creamos módulos, campos y relaciones que no existen en SuiteCRM por defecto. Tu CRM trabaja exactamente como trabaja tu negocio, no al revés.</p>
+        <ul class="card-list">
+          <li>Módulos personalizados desde cero</li>
+          <li>Flujos de trabajo y automatizaciones</li>
+          <li>Integraciones con APIs externas</li>
+          <li>Dashboards e informes a medida</li>
+        </ul>
+        <span class="card-tag">Custom Dev</span>
+      </div>
+
+      <div class="card card-addon reveal">
+        <div class="addon-ribbon">Add-on opcional</div>
+        <div class="card-icon">☁️</div>
+        <h3>Hosting Cloud Incluido</h3>
+        <p>La infraestructura va de la mano con la implementación. Podés alojar SuiteCRM en tus propios servidores o dejarnos gestionarlo en Google Cloud Platform — vos elegís.</p>
+        <ul class="card-list">
+          <li>Deploy en GCP con alta disponibilidad</li>
+          <li>SSL, firewalls y hardening de seguridad</li>
+          <li>Backups automáticos cifrados</li>
+          <li>Monitoreo 24/7 y alertas proactivas</li>
+        </ul>
+        <div class="addon-options">
+          <span class="addon-opt">🏢 Tus servidores</span>
+          <span class="addon-sep">·</span>
+          <span class="addon-opt">☁️ Nuestro GCP</span>
+        </div>
+        <span class="card-tag">Cloud Infra</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ POR QUÉ ELEGIRNOS ═══════════════════════════ -->
+<section id="porqueelegirnos">
+  <div class="section-inner why-simple-inner">
+    <div class="why-header reveal">
+      <span class="section-label">Por qué elegirnos</span>
+      <h2 class="section-title">Lo que nos hace <span class="accent">diferentes</span></h2>
+      <p class="section-desc">Tres pilares concretos que definen cómo trabajamos y qué podés esperar de nosotros desde el primer día.</p>
+    </div>
+    <div class="why-cards">
+      <div class="why-card reveal">
+        <div class="why-card-icon">🔩</div>
+        <h3>Especialización real</h3>
+        <p>Nuestro foco es SuiteCRM, no somos generalistas. Conocemos la plataforma a fondo: sus hooks, sus límites y cómo llevarla más allá de lo que viene de fábrica.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-card-icon">🛠️</div>
+        <h3>Código propio, sin atajos</h3>
+        <p>Cada módulo y flujo de trabajo que entregamos está desarrollado a medida para tu negocio. Sin plugins genéricos, sin soluciones provisorias que se rompen con la próxima actualización.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-card-icon">🤝</div>
+        <h3>Acompañamiento continuo</h3>
+        <p>No desaparecemos al entregar el proyecto. Estamos disponibles para soporte, evolución del sistema y nuevas funcionalidades a medida que tu negocio crece.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PROCESO ═══════════════════════════ -->
+<section id="proceso">
+  <div class="section-inner">
+    <span class="section-label reveal">Nuestro proceso</span>
+    <h2 class="section-title reveal">De cero a CRM <span class="accent">funcionando</span></h2>
+    <div class="steps">
+      <div class="step reveal" style="--delay:0ms">
+        <span class="step-top-line"></span><span class="step-shimmer"></span>
+        <div class="step-connector"></div>
+        <h4>Diagnóstico</h4>
+        <p>Analizamos tus procesos de ventas, operaciones y soporte para identificar los puntos de mejora que el CRM debe resolver.</p>
+      </div>
+      <div class="step reveal" style="--delay:80ms">
+        <span class="step-top-line"></span><span class="step-shimmer"></span>
+        <div class="step-connector"></div>
+        <h4>Diseño técnico</h4>
+        <p>Mapeamos la arquitectura de módulos, flujos de trabajo y permisos. Nada se construye sin haber sido diseñado primero.</p>
+      </div>
+      <div class="step reveal" style="--delay:160ms">
+        <span class="step-top-line"></span><span class="step-shimmer"></span>
+        <div class="step-connector"></div>
+        <h4>Desarrollo</h4>
+        <p>Implementamos, customizamos e integramos en sprints cortos con demos iterativas para que veas el avance en tiempo real.</p>
+      </div>
+      <div class="step reveal" style="--delay:240ms">
+        <span class="step-top-line"></span><span class="step-shimmer"></span>
+        <div class="step-connector"></div>
+        <h4>Capacitación</h4>
+        <p>Formamos a tu equipo en el uso del CRM customizado. Sin adoptación interna, la mejor herramienta no sirve de nada.</p>
+      </div>
+      <div class="step reveal" style="--delay:320ms">
+        <span class="step-top-line"></span><span class="step-shimmer"></span>
+        <h4>Lanzamiento</h4>
+        <p>Go-live con soporte técnico intensivo las primeras semanas para asegurar una transición fluida y sin sorpresas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ CONTACTO ═══════════════════════════ -->
+<section id="contacto">
+  <div class="section-inner">
+
+    <div class="contact-info">
+      <span class="section-label reveal">Contacto</span>
+      <h2 class="section-title reveal">Hablemos de tu <span class="accent">proyecto CRM</span></h2>
+      <p class="section-desc reveal">
+        Completá el formulario y un especialista te va a responder para coordinar una evaluación inicial sin cargo.
+      </p>
+    </div>
+
+    <div class="form-card reveal">
+      <div class="form-message" id="form-success">
+        ✅ ¡Mensaje enviado! Te contactaremos pronto.
+      </div>
+      <div class="form-message error-msg" id="form-error">
+        ❌ Hubo un error al enviar. Intentá de nuevo.
+      </div>
+
+      
+      <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+        <input type="hidden" name="access_key" value="91c115cc-0690-48f1-bcae-23b156ef16a8" />
+        <input type="hidden" name="from_name" value="[Nuestra Marca] Landing" />
+
+        <!-- Honeypot anti-spam (oculto para humanos, visible para bots) -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="hp_website">Sitio web (no completar)</label>
+          <input type="text" id="hp_website" name="botcheck" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <input type="hidden" name="subject" value="Nueva consulta desde [Nuestra Marca]" />
+        <input type="hidden" name="replyto" id="replyto-field" />
+
+        <div class="form-group">
+          <label for="nombre">Nombre completo *</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Juan García" autocomplete="name" required maxlength="120" />
+          <span class="field-error" id="err-nombre"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="empresa">Empresa *</label>
+          <input type="text" id="empresa" name="empresa" placeholder="Mi Empresa S.A." autocomplete="organization" required maxlength="120" />
+          <span class="field-error" id="err-empresa"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email corporativo *</label>
+          <input type="email" id="email" name="email" placeholder="juan@empresa.com" autocomplete="email" required maxlength="200" />
+          <span class="field-error" id="err-email"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="servicio">Servicio de interés</label>
+          <select id="servicio" name="servicio">
+            <option value="">— Seleccioná una opción —</option>
+            <option value="Implementación de SuiteCRM">Implementación de SuiteCRM</option>
+            <option value="Customización Avanzada">Customización Avanzada</option>
+            <option value="Infraestructura Cloud">Infraestructura Cloud</option>
+            <option value="Todos los servicios">Todos los servicios</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="consulta">Consulta técnica *</label>
+          <textarea id="consulta" name="consulta" placeholder="Describí brevemente qué querés lograr con SuiteCRM…" required minlength="20" maxlength="2000"></textarea>
+          <span class="field-error" id="err-consulta"></span>
+        </div>
+
+        <button type="submit" class="form-submit" id="submit-btn">
+          <span id="btn-text">Enviar consulta</span>
+          <span id="btn-icon">→</span>
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <div class="footer-brand">
+    <span class="dot"></span>
+    [Nuestra Marca]
+  </div>
+  <p>&copy; 2025 [Nuestra Marca]. Especialistas en SuiteCRM.</p>
+
+</footer>
+
+<!-- ═══════════════════════════ JAVASCRIPT ═══════════════════════════ -->
+<script>
+  'use strict';
+
+  /* ── Mobile menu ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  /* ── Scroll reveal with stagger support ── */
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const delay = e.target.style.getPropertyValue('--delay') || '0ms';
+        setTimeout(() => {
+          e.target.classList.add('visible');
+        }, parseInt(delay) || 0);
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ── Input sanitization ── */
+  function sanitize(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;')
+      .trim();
+  }
+
+  /* ── Validation helpers ── */
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function setError(fieldId, errId, msg) {
+    const field = document.getElementById(fieldId);
+    const err   = document.getElementById(errId);
+    field.classList.toggle('error', !!msg);
+    err.textContent = msg || '';
+  }
+
+  function validateForm(data) {
+    let valid = true;
+
+    if (!data.nombre || data.nombre.length < 2) {
+      setError('nombre', 'err-nombre', 'Ingresá tu nombre completo.');
+      valid = false;
+    } else {
+      setError('nombre', 'err-nombre', '');
+    }
+
+    if (!data.empresa || data.empresa.length < 2) {
+      setError('empresa', 'err-empresa', 'Ingresá el nombre de tu empresa.');
+      valid = false;
+    } else {
+      setError('empresa', 'err-empresa', '');
+    }
+
+    if (!data.email || !EMAIL_REGEX.test(data.email)) {
+      setError('email', 'err-email', 'Ingresá un email válido.');
+      valid = false;
+    } else {
+      setError('email', 'err-email', '');
+    }
+
+    if (!data.consulta || data.consulta.length < 20) {
+      setError('consulta', 'err-consulta', 'La consulta debe tener al menos 20 caracteres.');
+      valid = false;
+    } else {
+      setError('consulta', 'err-consulta', '');
+    }
+
+    return valid;
+  }
+
+  /* ── Rate limiting: máx 3 intentos en 60 segundos ── */
+  const RATE_LIMIT_MAX      = 3;
+  const RATE_LIMIT_WINDOW   = 60 * 1000; // 60 segundos
+  let submitTimestamps = [];
+
+  function isRateLimited() {
+    const now = Date.now();
+    // Limpiar intentos fuera de la ventana
+    submitTimestamps = submitTimestamps.filter(t => now - t < RATE_LIMIT_WINDOW);
+    if (submitTimestamps.length >= RATE_LIMIT_MAX) return true;
+    submitTimestamps.push(now);
+    return false;
+  }
+
+  /* ── Form submission ── */
+  const form      = document.getElementById('contact-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const btnText   = document.getElementById('btn-text');
+  const btnIcon   = document.getElementById('btn-icon');
+  const successMsg = document.getElementById('form-success');
+  const errorMsg   = document.getElementById('form-error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    successMsg.style.display = 'none';
+    errorMsg.style.display   = 'none';
+
+    /* Honeypot check */
+    const hp = document.getElementById('hp_website').value;
+    if (hp) return; /* bot detectado — abort silencioso */
+
+    /* Rate limit check */
+    if (isRateLimited()) {
+      errorMsg.textContent = '⏱️ Demasiados intentos. Esperá un momento antes de volver a enviar.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    const rawData = {
+      nombre:   document.getElementById('nombre').value,
+      empresa:  document.getElementById('empresa').value,
+      email:    document.getElementById('email').value,
+      servicio: document.getElementById('servicio').value,
+      consulta: document.getElementById('consulta').value,
+    };
+
+    /* Sanitize */
+    const cleanData = {};
+    for (const [key, val] of Object.entries(rawData)) {
+      cleanData[key] = sanitize(val);
+    }
+
+    if (!validateForm(cleanData)) return;
+
+    /* Set reply-to */
+    document.getElementById('replyto-field').value = cleanData.email;
+
+    /* UI: loading state */
+    submitBtn.disabled = true;
+    btnText.textContent = 'Enviando…';
+    btnIcon.textContent = '⏳';
+
+    try {
+      const formData = new FormData(form);
+      const res  = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+      const json = await res.json();
+
+      if (json.success) {
+        successMsg.style.display = 'block';
+        form.reset();
+        form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        throw new Error(json.message || 'Error');
+      }
+    } catch {
+      errorMsg.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      btnText.textContent = 'Enviar consulta';
+      btnIcon.textContent = '→';
+    }
+  });
+
+  /* ── Real-time inline validation on blur ── */
+  document.getElementById('nombre').addEventListener('blur', function() {
+    setError('nombre', 'err-nombre', this.value.trim().length < 2 ? 'Ingresá tu nombre completo.' : '');
+  });
+  document.getElementById('empresa').addEventListener('blur', function() {
+    setError('empresa', 'err-empresa', this.value.trim().length < 2 ? 'Ingresá el nombre de tu empresa.' : '');
+  });
+  document.getElementById('email').addEventListener('blur', function() {
+    setError('email', 'err-email', !EMAIL_REGEX.test(this.value.trim()) ? 'Ingresá un email válido.' : '');
+  });
+  document.getElementById('consulta').addEventListener('blur', function() {
+    setError('consulta', 'err-consulta', this.value.trim().length < 20 ? 'La consulta debe tener al menos 20 caracteres.' : '');
+  });
+
+  /* ── 3D Tilt effect on cards, why-cards and steps ── */
+  document.querySelectorAll('.card, .why-card, .step').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const rotX = ((y - cy) / cy) * -8;
+      const rotY = ((x - cx) / cx) * 8;
+      card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-6px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+
+  /* ── Animated number counters for metrics ── */
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.target);
+    const isDecimal = target % 1 !== 0;
+    const duration = 1400;
+    const startTime = performance.now();
+    const update = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.metric-value[data-target]').forEach(animateCounter);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const metricsPanel = document.querySelector('.metrics-panel');
+  if (metricsPanel) counterObserver.observe(metricsPanel);
+</script>
+
+<!-- ═══════════════════════════ WHATSAPP FLOTANTE ═══════════════════════════ -->
+<a
+  href="https://wa.me/TUNUMERO?text=Hola%2C%20quiero%20consultar%20sobre%20SuiteCRM"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="wa-float"
+  aria-label="Consultar por WhatsApp"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="28" height="28" fill="#fff">
+    <path d="M16 0C7.163 0 0 7.163 0 16c0 2.833.738 5.494 2.027 7.807L0 32l8.418-2.01A15.94 15.94 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 0 1-6.784-1.858l-.486-.29-5.002 1.195 1.232-4.87-.317-.5A13.26 13.26 0 0 1 2.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.862c-.398-.199-2.355-1.162-2.72-1.294-.366-.133-.632-.199-.898.199-.266.398-1.03 1.294-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.202-1.977-1.183-1.056-1.982-2.36-2.214-2.758-.232-.398-.025-.613.174-.811.179-.178.398-.465.597-.698.199-.232.266-.398.398-.664.133-.266.067-.498-.033-.697-.1-.199-.898-2.164-1.23-2.962-.324-.778-.653-.673-.898-.686l-.765-.013c-.266 0-.697.1-1.063.498-.366.398-1.395 1.362-1.395 3.327s1.428 3.86 1.627 4.126c.199.266 2.81 4.29 6.807 6.018.951.41 1.693.655 2.272.839.954.304 1.823.261 2.51.158.766-.114 2.355-.963 2.688-1.893.333-.93.333-1.727.232-1.893-.1-.166-.366-.266-.764-.465z"/>
+  </svg>
+  <span class="wa-label">¿Consultas? WhatsApp</span>
+</a>
+
+<style>
+  .wa-float {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    z-index: 999;
+    display: flex; align-items: center; gap: 10px;
+    background: #25d366;
+    color: #fff;
+    padding: 13px 20px 13px 16px;
+    border-radius: 999px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem; font-weight: 700;
+    box-shadow: 0 8px 30px rgba(37,211,102,0.4);
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: wa-bounce 2.5s ease-in-out 2s infinite;
+  }
+  .wa-float:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 14px 40px rgba(37,211,102,0.55);
+    animation: none;
+  }
+  .wa-label { white-space: nowrap; }
+  @keyframes wa-bounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  @media (max-width: 500px) {
+    .wa-float { padding: 13px; border-radius: 50%; }
+    .wa-label { display: none; }
+  }
+</style>
+
+</body>
+</html>
